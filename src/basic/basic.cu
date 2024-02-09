@@ -491,7 +491,7 @@ void update(double *d_X, double *d_residual_ij, int m, int n, int col)
 
 
 
-void end_end_residual(double *data, int M, int N, int m, int *U, int uN)
+extern "C" void end_end_residual(double *data, int M, int N, int m, int *U, int uN)
 {
     double *d_X;
 
@@ -562,7 +562,7 @@ void end_end_residual(double *data, int M, int N, int m, int *U, int uN)
 }
 
 
-double* causal_order(double *data, int m, int n, double *mlist)
+extern "C" double* causal_order(double *data, int m, int n, double *mlist)
 {
     std::cout << "here";
     double *A;

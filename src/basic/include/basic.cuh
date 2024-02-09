@@ -17,7 +17,7 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
    }
 }
 
-void end_end_residual(double *data, int M, int N, int m, int *U, int uN);
-double* causal_order(double *data, int m, int n, double *mlist);
+extern "C"  void end_end_residual(double *data, int M, int N, int m, int *U, int uN);
+extern "C" double* causal_order(double *data, int m, int n, double *mlist);
 
 #endif //CUDA_CODE_CUH

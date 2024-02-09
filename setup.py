@@ -1,6 +1,6 @@
 from pathlib import Path
 from setuptools import setup
-from setuptools_cuda_cpp import CUDAExtension, BuildExtension, fix_dll
+from setuptools_cuda_cpp import CUDAExtension, BuildExtension
 import os
 import numpy
 
@@ -21,8 +21,8 @@ cuda_ext = CUDAExtension(
     dlink=True,
     dlink_libraries=['cudart', 'cudadevrt', 'nvToolsExt'],
     extra_compile_args={
-        'cxx': ['-std=c++17'],
-        'nvcc': ['-std=c++17', f'-arch={gpu_arch}', '-Xcompiler', '-fPIC'],
+        'cxx': ['-g','-std=c++17'],
+        'nvcc': ['-std=c++17', f'-arch={gpu_arch}'],
     },
 )
 
@@ -31,5 +31,5 @@ setup(
     cmdclass={'build_ext': BuildExtension},
     description='CULiNGAM accelerates LiNGAM analysis on GPUs.',
     version='0.0.1',
-    author='V'
+    author='Victor Akinwande'
 )
