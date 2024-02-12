@@ -9,7 +9,7 @@ cuda_include_dir = os.path.join(cuda_home, 'include')
 cuda_lib_dir = os.path.join(cuda_home, 'lib64')
 gpu_arch = os.environ.get('GPU_ARCH', 'sm_86')
 
-cuda_ext_path = Path('src/basic')
+cuda_ext_path = Path('src/culingam')
 cuda_ext = CUDAExtension(
     name='lingam_cuda',
     include_dirs=[cuda_ext_path / 'include', cuda_include_dir, numpy.get_include()],
