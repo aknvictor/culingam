@@ -3,3 +3,4 @@
 /dist
 *.so
 test.py
+*.pyc
