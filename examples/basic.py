@@ -1,5 +1,5 @@
 import numpy as np
-from culingam.directlingam import DirectLiNGAM
+import subprocess
 
 # [[ 0.          0.          0.          2.99982982  0.          0.        ]
 #  [ 2.99997222  0.          2.00008518  0.          0.          0.        ]
@@ -8,6 +8,15 @@ from culingam.directlingam import DirectLiNGAM
 #  [ 7.99857006  0.         -0.99911522  0.          0.          0.        ]
 #  [ 3.99974733  0.          0.          0.          0.          0.        ]]
 # [3, 0, 2, 5, 4, 1]
+
+def get_cuda_version():
+    try:
+        nvcc_version = subprocess.check_output(["nvcc", "--version"]).decode('utf-8')
+        print("CUDA Version found:\n", nvcc_version)
+        return True
+    except Exception as e:
+        print("CUDA not found or nvcc not in PATH:", e)
+        return False
 
 def main():
     np.random.seed(42)
@@ -30,4 +39,13 @@ def main():
     print(dlm.causal_order_)
 
 if __name__ == "__main__":
-    main()
+    # Check for cuda availability before importing CUDA-dependent packages
+    if get_cuda_version():
+        try:
+            from culingam.directlingam import DirectLiNGAM
+            main()
+
+        except ImportError as e:
+            print("Failed to import CUDA-dependent package:", e)
+    else:
+        print("CUDA is not available. Please ensure CUDA is installed and correctly configured.")
