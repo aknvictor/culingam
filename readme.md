@@ -55,5 +55,6 @@ For bugs, issues, and feature requests, please submit a report to the repository
 ### Author
 Victor Akinwande
 
-### License
+### License and Acknowledgment
 This project is licensed under the MIT License - see the LICENSE file for details.
+A good amount of the code is adapted from sequential implementations of the LiNGAM algorithms present in CULiNGAM: https://github.com/cdt15/lingam.

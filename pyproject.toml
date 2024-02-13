@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "culingam"
-dependencies = ["numpy"]
+dependencies = ["numpy", "tqdm"]
 authors = [{ name="Victor Akinwande", email="viktour19@gmail.com" }]
 readme = "readme.md"
 requires-python = ">=3.8"

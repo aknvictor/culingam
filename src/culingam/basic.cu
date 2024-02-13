@@ -108,7 +108,7 @@ __global__ void element_wise_division(double *r, double *constant_std, double *r
 }
 
 
-__global__ void compute_residual(double *xi, double *xj, double *scaling_factor, double *residual, double *means_xi, int size)
+__global__ void compute_residual(double *xi, double *xj, double *scaling_factor, double *residual, int size)
 {
     const int i = threadIdx.x + blockDim.x * blockIdx.x;
     if (i < size)
@@ -376,8 +376,8 @@ void compute_M(double *d_X, double* xi_std, double* xj_std, double *M_list, int 
                 element_wise_division<<<blocks, threads, 0, streams[streamIndex]>>>(d_covariance_j, d_variance_i, scaling_factor_ji, 1);
 
 
-                compute_residual<<<blocks, threads, 0, streams[streamIndex]>>>(xi_std, xj_std, scaling_factor_ij, d_residual_ij, d_mean_xi, m);
-                compute_residual<<<blocks, threads, 0, streams[streamIndex]>>>(xj_std, xi_std, scaling_factor_ji, d_residual_ji, d_mean_xj, m);
+                compute_residual<<<blocks, threads, 0, streams[streamIndex]>>>(xi_std, xj_std, scaling_factor_ij, d_residual_ij, m);
+                compute_residual<<<blocks, threads, 0, streams[streamIndex]>>>(xj_std, xi_std, scaling_factor_ji, d_residual_ji, m);
                 // gpuErrchk(cudaDeviceSynchronize());
 
                 compute_mean<<<blocks, threads, sharedMemSize, streams[streamIndex]>>>(d_residual_ij, means_ri, m);
@@ -490,82 +490,11 @@ void update(double *d_X, double *d_residual_ij, int m, int n, int col)
 }
 
 
-
-extern "C" void end_end_residual(double *data, int M, int N, int m, int *U, int uN)
+extern "C" double* causal_order(double *data, int m, int n)
 {
-    double *d_X;
-
-    cudaMalloc(&d_X, M * N * sizeof(double));
-    cudaMemcpy(d_X, data, M * N * sizeof(double), cudaMemcpyHostToDevice);
-
-    dim3 blocks(256);
-    dim3 grid((M + blocks.x - 1) / blocks.x);
-
-    size_t sharedMemSize = blocks.x * sizeof(double);
-
-    double *xj, *xm;
-
-    cudaMalloc(&xj, M * sizeof(double));
-    cudaMalloc(&xm, M * sizeof(double));
-
-    double *means_xj, *means_xm;
-
-    cudaMalloc(&means_xj, sizeof(double));
-    cudaMalloc(&means_xm, sizeof(double));
-
-    double *h_means_xj, *h_means_xm;
-
-    cudaMallocHost(&h_means_xj, sizeof(double));
-    cudaMallocHost(&h_means_xm, sizeof(double));
-
-    double *d_residual_ij, *d_covariance_i, *d_variance_j, *scaling_factor_ij;
-
-    cudaMalloc(&d_residual_ij, M * sizeof(double));
-
-    cudaMalloc(&d_covariance_i, sizeof(double));
-    cudaMalloc(&d_variance_j, sizeof(double));
-    cudaMalloc(&scaling_factor_ij, sizeof(double));
-
-    int j = 0;
-    for (int uj = 0; uj < uN; ++uj)
-    {
-        j = U[uj];
-        process_column<<<grid, blocks>>>(d_X, xj, M, N, j);
-        process_column<<<grid, blocks>>>(d_X, xm, M, N, m);
-
-        compute_mean<<<grid, blocks, sharedMemSize>>>(xj, means_xj, M);
-        compute_mean<<<grid, blocks, sharedMemSize>>>(xm, means_xm, M);
-
-        divonhost(h_means_xj, means_xj, M);
-        divonhost(h_means_xm, means_xm, M);
-
-        compute_covariance_variance<<<grid, blocks, 2 * sharedMemSize>>>(xj, xm, means_xj, means_xm, d_covariance_i, d_variance_j, M);
-        element_wise_division<<<grid, blocks>>>(d_covariance_i, d_variance_j, scaling_factor_ij, 1);
-
-        compute_residual<<<grid, blocks>>>(xj, xm, scaling_factor_ij, d_residual_ij, means_xj, M);
-        update(d_X, d_residual_ij, M, N, j);
-    }
-
-    cudaMemcpy(data, d_X, M * N * sizeof(double), cudaMemcpyDeviceToHost);
-    cudaFree(xj);
-    cudaFree(xm);
-    cudaFree(means_xj);
-    cudaFree(means_xm);
-    cudaFree(d_residual_ij);
-    cudaFree(d_covariance_i);
-    cudaFree(d_variance_j);
-    cudaFree(scaling_factor_ij);
-    cudaFreeHost(h_means_xj);
-    cudaFreeHost(h_means_xm);
-    cudaFree(d_X);
-
-}
-
-
-extern "C" double* causal_order(double *data, int m, int n, double *mlist)
-{
-    std::cout << "here";
     double *A;
+    double *mlist;
+
 
     gpuErrchk(cudaMalloc(&A, m * n * sizeof(double)));
     gpuErrchk(cudaMemcpy(A, data, m * n * sizeof(double), cudaMemcpyHostToDevice));
@@ -597,7 +526,7 @@ extern "C" double* causal_order(double *data, int m, int n, double *mlist)
     double *d_mean_xi,  *d_mean_xj;
     double *d_residual_ij,  *d_residual_ji,  *d_covariance_i, *d_variance_i,  *d_covariance_j, *d_variance_j, *scaling_factor_ij, *scaling_factor_ji;
 
-    // mlist = (double*)malloc(n * sizeof(double));
+    mlist = (double*)malloc(n * sizeof(double));
     gpuErrchk(cudaMalloc(&d_mean_xi,  sizeof(double)));
     gpuErrchk(cudaMalloc(&d_mean_xj, sizeof(double)));;
 
@@ -684,7 +613,7 @@ extern "C" double* causal_order(double *data, int m, int n, double *mlist)
 
     cudaFree(A);
 
-    std::cout << "mlist:" << mlist[0];
+    // std::cout << "mlist:" << mlist[0];
 
     return mlist;
 }

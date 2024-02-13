@@ -8,11 +8,14 @@
 
 static PyObject *causal_order_wrapper(PyObject *self, PyObject *args) {
     PyObject *data_obj;
-    PyObject *mlist_obj;
+    // PyObject *mlist_obj;
     int m, n;
 
     // Parse a Python tuple and two ints from the args
-    if (!PyArg_ParseTuple(args, "O!iiO!", &PyArray_Type, &data_obj, &m, &n, &PyArray_Type, &mlist_obj)) {
+    // if (!PyArg_ParseTuple(args, "O!iiO!", &PyArray_Type, &data_obj, &m, &n, &PyArray_Type, &mlist_obj)) {
+
+
+    if (!PyArg_ParseTuple(args, "O!ii", &PyArray_Type, &data_obj, &m, &n)) {
         return nullptr;
     }
 
@@ -22,19 +25,19 @@ static PyObject *causal_order_wrapper(PyObject *self, PyObject *args) {
         return nullptr;
     }
 
-    // Ensure mlist_obj is a contiguous array of doubles
-    PyArrayObject *mlist_array = (PyArrayObject*)PyArray_FROM_OTF(mlist_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
-    if (mlist_array == nullptr) {
-        Py_DECREF(data_array);
-        return nullptr;
-    }
+    // // Ensure mlist_obj is a contiguous array of doubles
+    // PyArrayObject *mlist_array = (PyArrayObject*)PyArray_FROM_OTF(mlist_obj, NPY_DOUBLE, NPY_ARRAY_IN_ARRAY);
+    // if (mlist_array == nullptr) {
+    //     Py_DECREF(data_array);
+    //     return nullptr;
+    // }
 
     // Get pointers to the data in the arrays
     double *data = (double*)PyArray_DATA(data_array);
-    double *mlist = (double*)PyArray_DATA(mlist_array);
+    // double *mlist = (double*)PyArray_DATA(mlist_array);
 
     // Call the C++ function
-    double *result = causal_order(data, m, n, mlist);
+    double *result = causal_order(data, m, n);
 
     // Handle the result
     // Assuming the result is an array of doubles of size n
@@ -46,7 +49,7 @@ static PyObject *causal_order_wrapper(PyObject *self, PyObject *args) {
 
     // Decrease reference counts to the arrays
     Py_DECREF(data_array);
-    Py_DECREF(mlist_array);
+    // Py_DECREF(mlist_array);
 
     return ret;
 }
