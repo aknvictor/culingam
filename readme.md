@@ -49,6 +49,8 @@ pip install .
 ### Usage
 After installation, you can use CULiNGAM in your Python projects to accelerate LiNGAM analysis. Here's a simple example to get started:
 
+https://github.com/Viktour19/culingam/blob/main/examples/basic.py
+
 ### Support
 For bugs, issues, and feature requests, please submit a report to the repository's issue tracker. Contributions are also welcome.
 
