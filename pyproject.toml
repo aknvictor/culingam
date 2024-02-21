@@ -1,6 +1,5 @@
 [build-system]
-requires = ["setuptools-cuda-cpp", "flit_core >=3.2,<4", "wheel", "cython"]
-build-backend = "flit_core.buildapi"
+requires = ["setuptools", "wheel", "setuptools-cuda-cpp", "packaging", "pybind11"]
 
 [project]
 name = "culingam"
