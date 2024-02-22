@@ -12,13 +12,15 @@ gpu_arch = os.environ.get('GPU_ARCH', 'sm_86')
 def append_nvcc_threads(nvcc_extra_args):
     return nvcc_extra_args + ['--threads', '4']
 
-cuda_ext_path = Path('src/culingam')
+this_dir = os.path.dirname(os.path.abspath(__file__))
+
 cuda_ext = CUDAExtension(
     name='lingam_cuda',
-    include_dirs=[cuda_ext_path / 'include', cuda_include_dir, numpy.get_include()],
+    include_dirs=[Path(this_dir) / "src" / "culingam" / "include",
+                  cuda_include_dir, numpy.get_include()],
     sources=[
-        str(cuda_ext_path / 'basic.cu'),
-        str(cuda_ext_path / 'basic_wrapper.cpp'),
+        Path(this_dir) / "src" / "culingam" / "basic.cu",
+        Path(this_dir) / "src" / "culingam" / "basic_wrapper.cpp",
     ],
     libraries=['cudart', 'cudadevrt', 'nvToolsExt'],
     extra_compile_args={
@@ -33,7 +35,7 @@ cuda_ext = CUDAExtension(
 
 setup(
     name='culingam',
-    version='0.0.4',
+    version='0.0.6',
     author='Victor Akinwande',
     description='CULiNGAM accelerates LiNGAM analysis on GPUs.',
     long_description=open('readme.md').read(),
@@ -41,5 +43,15 @@ setup(
     packages=find_packages(where='src'),
     package_dir={'': 'src'},
     ext_modules=[cuda_ext],
-    cmdclass={'build_ext': BuildExtension}
+    cmdclass={'build_ext': BuildExtension},
+    url="https://github.com/viktour19/culingam",
+    classifiers = [
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
+    python_requires=">=3.8",
+    install_requires=[
+        "numpy", "tqdm"
+    ]
 )
