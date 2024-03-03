@@ -10,7 +10,7 @@ To install CULiNGAM, you need a system with NVIDIA CUDA installed and a compatib
 
 ### Prerequisites
 
-- NVIDIA GPU with CUDA Compute Capability 8.6 or higher
+- NVIDIA GPU with CUDA Compute Capability 6.0 or higher
 - CUDA Toolkit 12.2 or compatible version
 - Python 3.6 or newer
 - Numpy
