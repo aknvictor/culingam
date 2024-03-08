@@ -2,7 +2,7 @@
 
 ## Introduction
 
-CULiNGAM is a high-performance library that accelerates Linear Non-Gaussian Acyclic Model (LiNGAM) analysis on GPUs. It leverages the computing power of NVIDIA GPUs to provide fast and efficient computations for LiNGAM applications, making it ideal for large-scale data analysis in fields such as bioinformatics, economics, and machine learning.
+CULiNGAM is a high-performance library that accelerates Linear Non-Gaussian Acyclic Model (LiNGAM) analysis on GPUs. It leverages the computing power of NVIDIA GPUs to provide fast and efficient computations for LiNGAM applications, making it ideal for large-scale data analysis in fields such as bioinformatics, economics, and machine learning. CULiNGAM can be more more than 32x faster than CPU implementations: https://arxiv.org/abs/2403.03772.
 
 ## Installation
 
